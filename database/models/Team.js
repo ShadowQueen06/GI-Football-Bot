@@ -1,1 +1,1 @@
-
+const mongoose=require('mongoose');const s=new mongoose.Schema({discordId:String,guildId:String,formation:{type:String,default:'4-3-3'},cardIds:{type:[String],default:[]}},{timestamps:true});s.index({discordId:1,guildId:1},{unique:true});module.exports=mongoose.model('Team',s);

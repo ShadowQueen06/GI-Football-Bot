@@ -1,1 +1,1 @@
-
+const mongoose=require('mongoose');const s=new mongoose.Schema({guildId:String,discordId:String,fixtureId:String,homeScore:Number,awayScore:Number,points:{type:Number,default:0}},{timestamps:true});s.index({guildId:1,discordId:1,fixtureId:1},{unique:true});module.exports=mongoose.model('Prediction',s);

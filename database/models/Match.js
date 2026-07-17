@@ -1,1 +1,1 @@
-
+const mongoose=require('mongoose');const s=new mongoose.Schema({guildId:String,homeUserId:String,awayUserId:String,homeScore:Number,awayScore:Number,winnerId:String,events:[String]},{timestamps:true});module.exports=mongoose.model('Match',s);

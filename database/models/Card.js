@@ -1,1 +1,1 @@
-
+const mongoose=require('mongoose');const s=new mongoose.Schema({playerId:{type:String,required:true,unique:true},name:String,rating:Number,position:String,nation:String,club:String,rarity:String,imageUrl:{type:String,default:''}},{timestamps:true});module.exports=mongoose.model('Card',s);
