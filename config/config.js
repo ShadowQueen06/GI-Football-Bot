@@ -1,8 +1,17 @@
 module.exports = {
+  // Channels
   gameChannelId: process.env.GAME_CHANNEL_ID?.trim() || null,
-  packCooldownMs: 6 * 60 * 60 * 1000,
-  dailyCooldownMs: 24 * 60 * 60 * 1000,
+  matchesChannelId: process.env.MATCHES_CHANNEL_ID?.trim() || null,
+  predictionsChannelId: process.env.PREDICTIONS_CHANNEL_ID?.trim() || null,
+
+  // Economy
   starterCoins: 1000,
   dailyReward: 500,
-  packSize: 5
+
+  // Packs
+  packSize: 5,
+  packCooldownMs: 6 * 60 * 60 * 1000,
+
+  // Daily
+  dailyCooldownMs: 24 * 60 * 60 * 1000
 };
