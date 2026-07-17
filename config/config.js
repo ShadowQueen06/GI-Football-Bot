@@ -6,7 +6,7 @@ module.exports = {
 
   // Economy
   starterCoins: 250,
-  dailyReward: 1000,
+  dailyReward: 500,
 
   // Packs
   packSize: 5,
