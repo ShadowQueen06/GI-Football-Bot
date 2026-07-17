@@ -1,1 +1,1 @@
-
+const {EmbedBuilder}=require('discord.js');module.exports={name:'مساعدة',aliases:['الاوامر','أوامر'],async execute(message){await message.reply({embeds:[new EmbedBuilder().setColor(0x5865f2).setTitle('⚽ GI Football').setDescription(['**باك** — افتح باك مجاني كل 6 ساعات','**بطاقاتي** — اعرض أفضل بطاقاتك','**فريقي** — اعرض أفضل تشكيلة','**يومي** — مكافأة يومية','**رصيدي** — عرض الرصيد','**مساعدة** — عرض الأوامر'].join('\n'))]});}};
