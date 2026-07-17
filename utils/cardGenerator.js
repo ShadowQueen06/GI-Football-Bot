@@ -1,4 +1,5 @@
 const sharp = require('sharp');
+const getPlayerImage = require('./playerImage');
 
 const styles = {
   Common: ['#2f3542', '#57606f', '#dfe4ea'],
@@ -56,7 +57,8 @@ module.exports = async function createCard(player) {
   const [primary, secondary, accent] =
     styles[player.rarity] || styles.Common;
 
-  const photo = await fetchImage(player.imageUrl);
+  const imageUrl = await getPlayerImage(player);
+  const photo = await fetchImage(imageUrl);
 
   const backgroundSvg = `
     <svg width="720" height="1000" xmlns="http://www.w3.org/2000/svg">
@@ -241,36 +243,43 @@ module.exports = async function createCard(player) {
   const layers = [];
 
   if (photo) {
-    const photoMask = Buffer.from(`
-      <svg width="550" height="500" xmlns="http://www.w3.org/2000/svg">
-        <rect
-          width="550"
-          height="500"
-          rx="42"
-          fill="white"
-        />
-      </svg>
-    `);
+    try {
+      const photoMask = Buffer.from(`
+        <svg width="550" height="500" xmlns="http://www.w3.org/2000/svg">
+          <rect
+            width="550"
+            height="500"
+            rx="42"
+            fill="white"
+          />
+        </svg>
+      `);
 
-    const processedPhoto = await sharp(photo)
-      .resize(550, 500, {
-        fit: 'cover',
-        position: 'top'
-      })
-      .composite([
-        {
-          input: photoMask,
-          blend: 'dest-in'
-        }
-      ])
-      .png()
-      .toBuffer();
+      const processedPhoto = await sharp(photo)
+        .resize(550, 500, {
+          fit: 'cover',
+          position: 'top'
+        })
+        .composite([
+          {
+            input: photoMask,
+            blend: 'dest-in'
+          }
+        ])
+        .png()
+        .toBuffer();
 
-    layers.push({
-      input: processedPhoto,
-      left: 85,
-      top: 185
-    });
+      layers.push({
+        input: processedPhoto,
+        left: 85,
+        top: 185
+      });
+    } catch (error) {
+      console.error(
+        `Failed to process image for ${player.name}:`,
+        error.message
+      );
+    }
   }
 
   layers.push({
