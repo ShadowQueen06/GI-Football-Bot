@@ -52,12 +52,6 @@ module.exports = {
             );
         }
 
-        /*
-         * الاستخدام:
-         * نتيجة 4 2
-         * أو:
-         * نتيجة 4 | 2
-         */
         const scoreText = args
             .join(" ")
             .replace(/\|/g, " ")
@@ -100,10 +94,6 @@ module.exports = {
             );
         }
 
-        /*
-         * إذا تم الرد على رسالة مباراة، نبحث عنها أولًا.
-         * وإذا لم يتم الرد، نختار آخر مباراة مفتوحة.
-         */
         let fixture = null;
 
         if (message.reference?.messageId) {
@@ -135,9 +125,6 @@ module.exports = {
             );
         }
 
-        /*
-         * نحجز المباراة لمنع تنفيذ أمر النتيجة عليها مرتين.
-         */
         const lockedFixture = await Fixture.findOneAndUpdate(
             {
                 _id: fixture._id,
@@ -165,10 +152,6 @@ module.exports = {
         fixture = lockedFixture;
 
         try {
-            /*
-             * جلب أول ثلاثة أعضاء توقعوا النتيجة الصحيحة،
-             * بترتيب أسبقية إرسال التوقع.
-             */
             const correctPredictions = await Prediction.find({
                 guildId: message.guild.id,
                 fixtureId: fixture._id,
@@ -191,9 +174,6 @@ module.exports = {
                 const prediction = correctPredictions[index];
                 const reward = rewards[index];
 
-                /*
-                 * يمنع إعطاء الجائزة نفسها مرتين.
-                 */
                 const existingReward = await RewardLog.findOne({
                     fixtureId: fixture._id,
                     userId: prediction.userId
@@ -245,9 +225,6 @@ module.exports = {
 
             await fixture.save();
 
-            /*
-             * تحديث رسالة المباراة وإغلاق زر التوقع.
-             */
             const finishedEmbed = new EmbedBuilder()
                 .setColor(0xe74c3c)
                 .setTitle("🏁 انتهت المباراة")
@@ -305,9 +282,6 @@ module.exports = {
                 }
             }
 
-            /*
-             * إنشاء نص الفائزين.
-             */
             const winnersText = winners.length
                 ? winners
                       .map(
@@ -319,9 +293,6 @@ module.exports = {
                       .join("\n")
                 : "لم يتوقع أي عضو النتيجة الصحيحة.";
 
-            /*
-             * إعلان النتيجة والفائزين في قناة المباريات/الإحصائيات.
-             */
             const resultEmbed = new EmbedBuilder()
                 .setColor(0xf1c40f)
                 .setTitle("🏆 نتائج مسابقة التوقعات")
@@ -343,30 +314,14 @@ module.exports = {
                 })
                 .setTimestamp();
 
-            const statisticsChannel =
-                message.guild.channels.cache.get(
-                    config.matchesChannelId
-                );
-
-            if (statisticsChannel?.isTextBased()) {
-                await statisticsChannel.send({
-                    embeds: [resultEmbed],
-                    allowedMentions: {
-                        users: winners.map(
-                            winner => winner.userId
-                        )
-                    }
-                });
-            } else {
-                await message.channel.send({
-                    embeds: [resultEmbed],
-                    allowedMentions: {
-                        users: winners.map(
-                            winner => winner.userId
-                        )
-                    }
-                });
-            }
+            await message.channel.send({
+                embeds: [resultEmbed],
+                allowedMentions: {
+                    users: winners.map(
+                        winner => winner.userId
+                    )
+                }
+            });
 
             await message.reply(
                 `✅ تم تسجيل النتيجة وتوزيع الجوائز بنجاح.\nعدد الفائزين: **${winners.length}**`
