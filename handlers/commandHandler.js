@@ -6,7 +6,8 @@ const commands = [
     require("../commands/balance"),
     require("../commands/help"),
     require("../commands/match"),
-    require("../commands/predict")
+    require("../commands/predict"),
+    require("../commands/result")
 ];
 
 const map = new Map();
