@@ -7,7 +7,10 @@ const commands = [
     require("../commands/help"),
     require("../commands/match"),
     require("../commands/predict"),
-    require("../commands/result")
+    require("../commands/result"),
+    require("../commands/sell"),
+    require("../commands/market"),
+    require("../commands/buy")
 ];
 
 const map = new Map();
