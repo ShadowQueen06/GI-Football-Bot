@@ -1,0 +1,1 @@
+const User=require('../database/models/User');const config=require('../config/config');module.exports=async function(discordId,guildId){return User.findOneAndUpdate({discordId,guildId},{$setOnInsert:{discordId,guildId,coins:config.starterCoins}},{upsert:true,new:true,setDefaultsOnInsert:true});};

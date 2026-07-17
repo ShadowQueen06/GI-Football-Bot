@@ -1,1 +1,1 @@
-
+module.exports=(h,a)=>{const c=h/Math.max(1,h+a),hs=Math.floor(Math.random()*4)+(Math.random()<c?1:0),as=Math.floor(Math.random()*4)+(Math.random()>c?1:0);return{homeScore:hs,awayScore:as,winner:hs===as?null:hs>as?'home':'away'};};

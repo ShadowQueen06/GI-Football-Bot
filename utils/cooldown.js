@@ -1,1 +1,1 @@
-
+function getRemaining(lastDate,cooldownMs){if(!lastDate)return 0;return Math.max(0,cooldownMs-(Date.now()-new Date(lastDate).getTime()));}function formatRemaining(ms){const m=Math.ceil(ms/60000),h=Math.floor(m/60),r=m%60;return h>0?`${h} ساعة و ${r} دقيقة`:`${r} دقيقة`;}module.exports={getRemaining,formatRemaining};
