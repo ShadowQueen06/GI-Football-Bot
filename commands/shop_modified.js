@@ -21,28 +21,28 @@ const PRODUCTS = {
   custom_color: {
     name: "Custom Color",
     emoji: "🎨",
-    price: 250000,
+    price: 100000,
     description: "رتبة لون خاصة باللون الذي تختاره."
   },
 
   vip: {
     name: "VIP",
     emoji: "👑",
-    price: 350000,
+    price: 200000,
     description: "رتبة VIP مع استخدام الإيموجيات والستيكرات الخارجية."
   },
 
   nitro_basic: {
     name: "Nitro Basic",
     emoji: "💎",
-    price: 500000,
+    price: 350000,
     description: "اشتراك Nitro Basic."
   },
 
   nitro_gaming: {
     name: "Nitro Gaming",
     emoji: "🚀",
-    price: 750000,
+    price: 500000,
     description: "اشتراك Nitro Gaming لمدة شهر."
   }
 };
@@ -60,16 +60,16 @@ function createShopEmbed() {
         "اختر المنتج الذي تريد شراءه من القائمة بالأسفل.",
         "",
         "🎨 **Custom Color**",
-        "السعر: **250,000 GI Coins**",
+        "السعر: **100,000 GI Coins**",
         "",
         "👑 **VIP**",
-        "السعر: **350,000 GI Coins**",
+        "السعر: **200,000 GI Coins**",
         "",
         "💎 **Nitro Basic**",
-        "السعر: **500,000 GI Coins**",
+        "السعر: **350,000 GI Coins**",
         "",
         "🚀 **Nitro Gaming**",
-        "السعر: **750,000 GI Coins**",
+        "السعر: **500,000 GI Coins**",
         "",
         "بعد اختيار المنتج سيفتح لك تكت شراء تلقائيًا."
       ].join("\n")
@@ -454,6 +454,12 @@ async function handlePurchaseDecision(interaction) {
       status: "rejected"
     });
 
+    await interaction.channel.send("❌ تم رفض الطلب. سيتم حذف التذكرة خلال 10 ثوانٍ.");
+
+    setTimeout(async () => {
+      await interaction.channel.delete().catch(() => {});
+    }, 10000);
+
     return true;
   }
 
@@ -553,6 +559,12 @@ async function handlePurchaseDecision(interaction) {
     status: "accepted",
     newBalance: account.balance
   });
+
+  await interaction.channel.send("✅ تم قبول الطلب. سيتم حذف التذكرة خلال 10 ثوانٍ.");
+
+  setTimeout(async () => {
+    await interaction.channel.delete().catch(() => {});
+  }, 10000);
 
   return true;
 }
