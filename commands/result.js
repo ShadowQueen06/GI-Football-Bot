@@ -45,14 +45,14 @@ module.exports = {
             return message.reply("❌ هذا الأمر للإدارة فقط.");
         }
 
-        if (
-            config.matchesChannelId &&
-            message.channel.id !== config.matchesChannelId
-        ) {
-            return message.reply(
-                "❌ استخدم هذا الأمر داخل قناة المباريات فقط."
-            );
-        }
+       if (
+    config.predictionsChannelId &&
+    message.channel.id !== config.predictionsChannelId
+) {
+    return message.reply(
+        "❌ استخدم هذا الأمر داخل قناة التوقعات فقط."
+    );
+}
 
         const parts = args
             .join(" ")
