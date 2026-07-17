@@ -6,8 +6,6 @@ const {
     ButtonStyle
 } = require("discord.js");
 
-const mongoose = require("mongoose");
-
 const Fixture = require("../database/models/Fixture");
 const Prediction = require("../database/models/Prediction");
 const RewardLog = require("../database/models/RewardLog");
@@ -45,50 +43,44 @@ module.exports = {
             return message.reply("❌ هذا الأمر للإدارة فقط.");
         }
 
-       if (
-    config.predictionsChannelId &&
-    message.channel.id !== config.predictionsChannelId
-) {
-    return message.reply(
-        "❌ استخدم هذا الأمر داخل قناة التوقعات فقط."
-    );
-}
-
-        const parts = args
-            .join(" ")
-            .split("|")
-            .map(part => part.trim())
-            .filter(Boolean);
-
-        let fixtureReference;
-        let homeScoreText;
-        let awayScoreText;
-
-        if (parts.length === 2 && message.reference?.messageId) {
-            fixtureReference = message.reference.messageId;
-            [homeScoreText, awayScoreText] = parts;
-        } else if (parts.length === 3) {
-            [fixtureReference, homeScoreText, awayScoreText] = parts;
-        } else {
+        if (
+            config.predictionsChannelId &&
+            message.channel.id !== config.predictionsChannelId
+        ) {
             return message.reply(
-                [
-                    "❌ الاستخدام الصحيح:",
-                    "",
-                    "قم بالرد على رسالة المباراة واكتب:",
-                    "`نتيجة 2 | 1`",
-                    "",
-                    "أو استخدم معرف رسالة المباراة:",
-                    "`نتيجة معرف_الرسالة | 2 | 1`"
-                ].join("\n")
+                "❌ استخدم هذا الأمر داخل قناة التوقعات فقط."
             );
         }
+
+        /*
+         * الاستخدام:
+         * نتيجة 4 2
+         * أو:
+         * نتيجة 4 | 2
+         */
+        const scoreText = args
+            .join(" ")
+            .replace(/\|/g, " ")
+            .trim();
+
+        const scoreParts = scoreText
+            .split(/\s+/)
+            .filter(Boolean);
+
+        if (scoreParts.length !== 2) {
+            return message.reply(
+                "❌ الاستخدام الصحيح:\n`نتيجة 4 2`"
+            );
+        }
+
+        const [homeScoreText, awayScoreText] = scoreParts;
 
         if (
             !/^\d+$/.test(homeScoreText) ||
             !/^\d+$/.test(awayScoreText)
         ) {
             return message.reply(
-                "❌ يجب أن تكون النتيجة أرقامًا صحيحة فقط."
+                "❌ يجب كتابة النتيجة بالأرقام فقط.\nمثال: `نتيجة 4 2`"
             );
         }
 
@@ -108,37 +100,43 @@ module.exports = {
             );
         }
 
+        /*
+         * إذا تم الرد على رسالة مباراة، نبحث عنها أولًا.
+         * وإذا لم يتم الرد، نختار آخر مباراة مفتوحة.
+         */
         let fixture = null;
 
-        if (mongoose.Types.ObjectId.isValid(fixtureReference)) {
+        if (message.reference?.messageId) {
             fixture = await Fixture.findOne({
-                _id: fixtureReference,
-                guildId: message.guild.id
+                guildId: message.guild.id,
+                messageId: message.reference.messageId,
+                status: {
+                    $ne: "finished"
+                },
+                rewardsDistributed: false
             });
         }
 
         if (!fixture) {
             fixture = await Fixture.findOne({
-                messageId: fixtureReference,
-                guildId: message.guild.id
+                guildId: message.guild.id,
+                status: {
+                    $in: ["open", "closed"]
+                },
+                rewardsDistributed: false
+            }).sort({
+                createdAt: -1
             });
         }
 
         if (!fixture) {
             return message.reply(
-                "❌ لم يتم العثور على المباراة. تأكد أنك رددت على رسالة المباراة الصحيحة."
-            );
-        }
-
-        if (fixture.status === "finished" || fixture.rewardsDistributed) {
-            return message.reply(
-                "❌ تم تسجيل نتيجة هذه المباراة وتوزيع جوائزها مسبقًا."
+                "❌ لا توجد مباراة مفتوحة أو بانتظار تسجيل النتيجة."
             );
         }
 
         /*
-         * حجز المباراة قبل توزيع الجوائز لمنع تنفيذ الأمر مرتين
-         * في الوقت نفسه.
+         * نحجز المباراة لمنع تنفيذ أمر النتيجة عليها مرتين.
          */
         const lockedFixture = await Fixture.findOneAndUpdate(
             {
@@ -160,13 +158,17 @@ module.exports = {
 
         if (!lockedFixture) {
             return message.reply(
-                "❌ تتم معالجة هذه المباراة بالفعل أو تم توزيع جوائزها."
+                "❌ تتم معالجة نتيجة هذه المباراة حاليًا أو تم تسجيلها مسبقًا."
             );
         }
 
         fixture = lockedFixture;
 
         try {
+            /*
+             * جلب أول ثلاثة أعضاء توقعوا النتيجة الصحيحة،
+             * بترتيب أسبقية إرسال التوقع.
+             */
             const correctPredictions = await Prediction.find({
                 guildId: message.guild.id,
                 fixtureId: fixture._id,
@@ -189,12 +191,15 @@ module.exports = {
                 const prediction = correctPredictions[index];
                 const reward = rewards[index];
 
-                const previousReward = await RewardLog.findOne({
+                /*
+                 * يمنع إعطاء الجائزة نفسها مرتين.
+                 */
+                const existingReward = await RewardLog.findOne({
                     fixtureId: fixture._id,
                     userId: prediction.userId
                 });
 
-                if (previousReward) {
+                if (existingReward) {
                     continue;
                 }
 
@@ -207,7 +212,6 @@ module.exports = {
                         $inc: {
                             balance: reward.amount
                         },
-
                         $set: {
                             lastRewardAt: new Date()
                         }
@@ -230,8 +234,7 @@ module.exports = {
                     userId: prediction.userId,
                     position: reward.position,
                     amount: reward.amount,
-                    medal: reward.medal,
-                    predictedAt: prediction.createdAt
+                    medal: reward.medal
                 });
             }
 
@@ -242,6 +245,9 @@ module.exports = {
 
             await fixture.save();
 
+            /*
+             * تحديث رسالة المباراة وإغلاق زر التوقع.
+             */
             const finishedEmbed = new EmbedBuilder()
                 .setColor(0xe74c3c)
                 .setTitle("🏁 انتهت المباراة")
@@ -264,25 +270,29 @@ module.exports = {
                 })
                 .setTimestamp();
 
-            const disabledRow = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId(`predict:${fixture._id}`)
-                    .setLabel("انتهى وقت التوقع")
-                    .setEmoji("🔒")
-                    .setStyle(ButtonStyle.Secondary)
-                    .setDisabled(true)
-            );
+            const disabledRow =
+                new ActionRowBuilder().addComponents(
+                    new ButtonBuilder()
+                        .setCustomId(`predict:${fixture._id}`)
+                        .setLabel("انتهى وقت التوقع")
+                        .setEmoji("🔒")
+                        .setStyle(ButtonStyle.Secondary)
+                        .setDisabled(true)
+                );
 
-            const matchesChannel =
-                message.guild.channels.cache.get(fixture.channelId);
+            const fixtureChannel =
+                message.guild.channels.cache.get(
+                    fixture.channelId
+                );
 
             if (
-                matchesChannel?.isTextBased() &&
+                fixtureChannel?.isTextBased() &&
                 fixture.messageId
             ) {
-                const fixtureMessage = await matchesChannel.messages
-                    .fetch(fixture.messageId)
-                    .catch(() => null);
+                const fixtureMessage =
+                    await fixtureChannel.messages
+                        .fetch(fixture.messageId)
+                        .catch(() => null);
 
                 if (fixtureMessage) {
                     await fixtureMessage
@@ -295,15 +305,23 @@ module.exports = {
                 }
             }
 
+            /*
+             * إنشاء نص الفائزين.
+             */
             const winnersText = winners.length
                 ? winners
                       .map(
                           winner =>
-                              `${winner.medal} <@${winner.userId}> — **${winner.amount.toLocaleString("en-US")} عملة**`
+                              `${winner.medal} <@${winner.userId}> — **${winner.amount.toLocaleString(
+                                  "en-US"
+                              )} عملة**`
                       )
                       .join("\n")
                 : "لم يتوقع أي عضو النتيجة الصحيحة.";
 
+            /*
+             * إعلان النتيجة والفائزين في قناة المباريات/الإحصائيات.
+             */
             const resultEmbed = new EmbedBuilder()
                 .setColor(0xf1c40f)
                 .setTitle("🏆 نتائج مسابقة التوقعات")
@@ -325,37 +343,45 @@ module.exports = {
                 })
                 .setTimestamp();
 
-            const predictionsChannel =
+            const statisticsChannel =
                 message.guild.channels.cache.get(
-                    config.predictionsChannelId
+                    config.matchesChannelId
                 );
 
-            if (predictionsChannel?.isTextBased()) {
-                await predictionsChannel.send({
+            if (statisticsChannel?.isTextBased()) {
+                await statisticsChannel.send({
                     embeds: [resultEmbed],
                     allowedMentions: {
-                        users: winners.map(winner => winner.userId)
+                        users: winners.map(
+                            winner => winner.userId
+                        )
+                    }
+                });
+            } else {
+                await message.channel.send({
+                    embeds: [resultEmbed],
+                    allowedMentions: {
+                        users: winners.map(
+                            winner => winner.userId
+                        )
                     }
                 });
             }
 
-            await message.reply({
-                content:
-                    `✅ تم تسجيل النتيجة وتوزيع الجوائز بنجاح.\n` +
-                    `عدد الفائزين: **${winners.length}**`
-            });
+            await message.reply(
+                `✅ تم تسجيل النتيجة وتوزيع الجوائز بنجاح.\nعدد الفائزين: **${winners.length}**`
+            );
         } catch (error) {
             console.error("Result command error:", error);
 
-            /*
-             * إعادة فتح إمكانية المعالجة إذا حدث خطأ قبل اكتمال التوزيع.
-             * سجلات الجوائز تمنع مكافأة العضو نفسه مرتين.
-             */
-            await Fixture.findByIdAndUpdate(fixture._id, {
-                $set: {
-                    status: "closed"
+            await Fixture.findByIdAndUpdate(
+                fixture._id,
+                {
+                    $set: {
+                        status: "closed"
+                    }
                 }
-            }).catch(() => null);
+            ).catch(() => null);
 
             return message.reply(
                 "❌ حدث خطأ أثناء تسجيل النتيجة أو توزيع الجوائز."
