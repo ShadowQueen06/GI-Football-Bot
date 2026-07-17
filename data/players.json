@@ -1,1 +1,242 @@
-
+[
+  {
+    "id": "messi",
+    "name": "Lionel Messi",
+    "rating": 93,
+    "position": "RW",
+    "nation": "Argentina",
+    "club": "Inter Miami",
+    "rarity": "Icon",
+    "imageUrl": ""
+  },
+  {
+    "id": "ronaldo",
+    "name": "Cristiano Ronaldo",
+    "rating": 92,
+    "position": "ST",
+    "nation": "Portugal",
+    "club": "Al Nassr",
+    "rarity": "Icon",
+    "imageUrl": ""
+  },
+  {
+    "id": "mbappe",
+    "name": "Kylian Mbappé",
+    "rating": 92,
+    "position": "ST",
+    "nation": "France",
+    "club": "Real Madrid",
+    "rarity": "Legendary",
+    "imageUrl": ""
+  },
+  {
+    "id": "haaland",
+    "name": "Erling Haaland",
+    "rating": 91,
+    "position": "ST",
+    "nation": "Norway",
+    "club": "Manchester City",
+    "rarity": "Legendary",
+    "imageUrl": ""
+  },
+  {
+    "id": "salah",
+    "name": "Mohamed Salah",
+    "rating": 90,
+    "position": "RW",
+    "nation": "Egypt",
+    "club": "Liverpool",
+    "rarity": "Legendary",
+    "imageUrl": ""
+  },
+  {
+    "id": "bellingham",
+    "name": "Jude Bellingham",
+    "rating": 90,
+    "position": "CM",
+    "nation": "England",
+    "club": "Real Madrid",
+    "rarity": "Legendary",
+    "imageUrl": ""
+  },
+  {
+    "id": "vinicius",
+    "name": "Vinícius Júnior",
+    "rating": 90,
+    "position": "LW",
+    "nation": "Brazil",
+    "club": "Real Madrid",
+    "rarity": "Legendary",
+    "imageUrl": ""
+  },
+  {
+    "id": "debruyne",
+    "name": "Kevin De Bruyne",
+    "rating": 89,
+    "position": "CM",
+    "nation": "Belgium",
+    "club": "Manchester City",
+    "rarity": "Epic",
+    "imageUrl": ""
+  },
+  {
+    "id": "kane",
+    "name": "Harry Kane",
+    "rating": 89,
+    "position": "ST",
+    "nation": "England",
+    "club": "Bayern Munich",
+    "rarity": "Epic",
+    "imageUrl": ""
+  },
+  {
+    "id": "rodri",
+    "name": "Rodri",
+    "rating": 89,
+    "position": "CDM",
+    "nation": "Spain",
+    "club": "Manchester City",
+    "rarity": "Epic",
+    "imageUrl": ""
+  },
+  {
+    "id": "courtois",
+    "name": "Thibaut Courtois",
+    "rating": 89,
+    "position": "GK",
+    "nation": "Belgium",
+    "club": "Real Madrid",
+    "rarity": "Epic",
+    "imageUrl": ""
+  },
+  {
+    "id": "vandijk",
+    "name": "Virgil van Dijk",
+    "rating": 89,
+    "position": "CB",
+    "nation": "Netherlands",
+    "club": "Liverpool",
+    "rarity": "Epic",
+    "imageUrl": ""
+  },
+  {
+    "id": "musiala",
+    "name": "Jamal Musiala",
+    "rating": 88,
+    "position": "CAM",
+    "nation": "Germany",
+    "club": "Bayern Munich",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "saka",
+    "name": "Bukayo Saka",
+    "rating": 88,
+    "position": "RW",
+    "nation": "England",
+    "club": "Arsenal",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "valverde",
+    "name": "Federico Valverde",
+    "rating": 88,
+    "position": "CM",
+    "nation": "Uruguay",
+    "club": "Real Madrid",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "wirtz",
+    "name": "Florian Wirtz",
+    "rating": 88,
+    "position": "CAM",
+    "nation": "Germany",
+    "club": "Bayer Leverkusen",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "hakimi",
+    "name": "Achraf Hakimi",
+    "rating": 87,
+    "position": "RB",
+    "nation": "Morocco",
+    "club": "Paris Saint-Germain",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "martinez",
+    "name": "Lautaro Martínez",
+    "rating": 87,
+    "position": "ST",
+    "nation": "Argentina",
+    "club": "Inter Milan",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "alisson",
+    "name": "Alisson",
+    "rating": 87,
+    "position": "GK",
+    "nation": "Brazil",
+    "club": "Liverpool",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "saliba",
+    "name": "William Saliba",
+    "rating": 87,
+    "position": "CB",
+    "nation": "France",
+    "club": "Arsenal",
+    "rarity": "Rare",
+    "imageUrl": ""
+  },
+  {
+    "id": "pedri",
+    "name": "Pedri",
+    "rating": 86,
+    "position": "CM",
+    "nation": "Spain",
+    "club": "Barcelona",
+    "rarity": "Common",
+    "imageUrl": ""
+  },
+  {
+    "id": "yamal",
+    "name": "Lamine Yamal",
+    "rating": 86,
+    "position": "RW",
+    "nation": "Spain",
+    "club": "Barcelona",
+    "rarity": "Common",
+    "imageUrl": ""
+  },
+  {
+    "id": "davies",
+    "name": "Alphonso Davies",
+    "rating": 85,
+    "position": "LB",
+    "nation": "Canada",
+    "club": "Bayern Munich",
+    "rarity": "Common",
+    "imageUrl": ""
+  },
+  {
+    "id": "dimarco",
+    "name": "Federico Dimarco",
+    "rating": 85,
+    "position": "LB",
+    "nation": "Italy",
+    "club": "Inter Milan",
+    "rarity": "Common",
+    "imageUrl": ""
+  }
+]

@@ -1,1 +1,7 @@
-
+{
+  "free": {
+    "name": "الباك المجاني",
+    "size": 5,
+    "cooldownHours": 6
+  }
+}

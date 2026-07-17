@@ -1,1 +1,22 @@
-
+{
+  "Common": {
+    "weight": 45,
+    "label": "عادية"
+  },
+  "Rare": {
+    "weight": 30,
+    "label": "نادرة"
+  },
+  "Epic": {
+    "weight": 17,
+    "label": "ملحمية"
+  },
+  "Legendary": {
+    "weight": 7,
+    "label": "أسطورية"
+  },
+  "Icon": {
+    "weight": 1,
+    "label": "أيقونة"
+  }
+}
