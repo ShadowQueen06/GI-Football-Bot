@@ -1,1 +1,20 @@
-
+{
+  "name": "gi-football-bot",
+  "version": "1.0.0",
+  "description": "Arabic Discord football card game bot.",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
+    "mongoose": "^8.15.1",
+    "sharp": "^0.34.2"
+  }
+}
