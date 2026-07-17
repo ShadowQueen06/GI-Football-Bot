@@ -5,8 +5,8 @@ module.exports = {
   predictionsChannelId: process.env.PREDICTIONS_CHANNEL_ID?.trim() || null,
 
   // Economy
-  starterCoins: 1000,
-  dailyReward: 500,
+  starterCoins: 250,
+  dailyReward: 1000,
 
   // Packs
   packSize: 5,
